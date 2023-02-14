@@ -41,20 +41,16 @@ public class ConfigmapDependentResource extends CRUDKubernetesDependentResource<
   @Override
   public ConfigMap update(ConfigMap actual, ConfigMap target, Mockserver primary, Context<Mockserver> context) {
     var res = super.update(actual, target, primary, context);
-    var ns = actual.getMetadata().getNamespace();
-    LOG.info("Restarting pods because the config map has changed in {}", ns);
+    var metadata = primary.getMetadata();
+    var ns = metadata.getNamespace();
 
-    final var labels = (Map<String, String>) context.managedDependentResourceContext().getMandatory(LABELS_CONTEXT_KEY,
-        Map.class);
-    // not that this is not necessary, eventually mounted config map would be
-    // updated, just this way
-    // is much faster; what is handy for demo purposes.
-    // https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#mounted-configmaps-are-updated-automatically
-    getKubernetesClient()
-        .pods()
-        .inNamespace(ns)
-        .withLabels(labels)
-        .delete();
+    LOG.info("Rolling restart deployment because the config map has changed in {}", ns);
+
+    //rolling restart for the deployment in order to load the new volume
+    getKubernetesClient().apps().deployments()
+      .inNamespace( ns )
+      .withName( metadata.getName() ).rolling().restart();
+
     return res;
   }
 
