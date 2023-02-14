@@ -23,18 +23,53 @@ spec:
   replica: 1
   image: mockserver/mockserver:latest
   config: |
-    [...]
+    [
+    {
+      "httpRequest": {
+        "path": "/hello"
+      },
+      "httpResponse": {
+        "statusCode": 200,
+        "body": {
+          "json": {
+            "message": "Hello World"
+          }
+        }
+      }
+    }
+    ]
 ```
 or 
 ```
 kubectl apply -f .\k8s\mockserver-test.yaml
 ```
-
-
+### Verify
 ```
 kubectl port-forward svc/mockserver-test 8080:8080
 ```
 from your browser: http://localhost:8080/mockserver/dashboard
+
+we can see the initialization data.
+```
+curl http://localhost:8080/hello
+...
+```
+## Update
+
+When we change the CRD changing the configuration, for exaple addiing new API mocks:
+```
+kubectl apply -f .\k8s\mockserver-test2.yaml
+```
+
+The operator will update the Mockserver and add the new API:
+
+
+```
+
+
+curl http://localhost:8080/products | jq
+...
+```
 
 ## Running the application in dev mode
 

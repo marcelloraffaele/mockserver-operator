@@ -9,78 +9,15 @@ spec:
     [
     {
       "httpRequest": {
-        "path": "/somePathOne"
-      },
-      "httpResponse": {
-        "statusCode": 200,
-        "body": {
-          "value": "one"
-        }
-      }
-    },
-    {
-      "httpRequest": {
-        "path": "/somePathTwo"
-      },
-      "httpResponse": {
-        "statusCode": 200,
-        "body": {
-          "value": "two"
-        }
-      }
-    },
-    {
-      "httpRequest": {
-        "path": "/somePathThree"
-      },
-      "httpResponse": {
-        "statusCode": 200,
-        "body": {
-          "value": "Three"
-        }
-      }
-    },
-    {
-      "httpRequest": {
-        "method": "GET",
-        "path": "/view/cart",
-        "queryStringParameters": {
-          "cartId": [
-            "055CA455-1DF7-45BB-8535-4F83E7266092"
-          ]
-        }
-      },
-      "httpResponse": {
-        "body": "some_response_body"
-      }
-    },
-    {
-      "httpRequest": {
-        "path": "/product/{cartId}",
-        "pathParameters": {
-          "cartId": [
-            "[A-Z0-9\\-]+"
-          ]
-        }
+        "path": "/hello"
       },
       "httpResponse": {
         "statusCode": 200,
         "body": {
           "json": {
-            "productId": "123",
-            "productName": "some product"
+            "message": "Hello World"
           }
         }
-      }
-    },
-
-    {
-      "httpRequest": {
-        "path": "/javascript/one"
-      },
-      "httpResponseTemplate": {
-        "template": "return {'statusCode': 200,'cookies': {'session': request.headers['session-id'][0]},'headers': {'Date': Date()}, 'body': {method: request.method, path: request.path, body: request.body}};",
-        "templateType": "JAVASCRIPT"
       }
     }
     ]
