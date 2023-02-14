@@ -41,13 +41,15 @@ spec:
 ```
 or 
 ```
-kubectl apply -f .\k8s\mockserver-test.yaml
+kubectl apply -f k8s/mockserver-test.yaml
 ```
 ### Verify
 ```
 kubectl port-forward svc/mockserver-test 8080:8080
 ```
-from your browser: http://localhost:8080/mockserver/dashboard
+from your browser: http://localhost:8080/mockserver/dashboard:
+
+![Dashboard1](docs/dashboard-1.png)
 
 we can see the initialization data.
 ```
@@ -58,7 +60,7 @@ curl http://localhost:8080/hello
 
 When we change the CRD changing the configuration, for exaple addiing new API mocks:
 ```
-kubectl apply -f .\k8s\mockserver-test2.yaml
+kubectl apply -f k8s/mockserver-test2.yaml
 ```
 
 The operator will update the Mockserver and add the new API:

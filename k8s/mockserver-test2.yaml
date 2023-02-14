@@ -7,60 +7,60 @@ spec:
   image: mockserver/mockserver:latest
   config: |
     [
-    {
-      "httpRequest": {
-        "path": "/hello"
-      },
-      "httpResponse": {
-        "statusCode": 200,
-        "body": {
-          "json": {
-            "message": "Hello World"
-          }
-        }
-      }
-    },
-    {
-      "httpRequest": {
-        "path": "/product/{cartId}",
-        "pathParameters": {
-          "cartId": [
-            "[A-Z0-9\\-]+"
-          ]
-        }
-      },
-      "httpResponse": {
-        "statusCode": 200,
-        "body": {
-          "json": {
-            "productId": "1",
-            "productName": "product 1"
-          }
-        }
-      }
-    },
-    {
-      "httpRequest": {
-        "path": "/products"
-      },
-      "httpResponse": {
-        "statusCode": 200,
-        "body": {
-          "json": [
-            {
-              "productId": "1",
-              "productName": "product1"
-            },
-            {
-              "productId": "2",
-              "productName": "product2"
-            },
-            {
-              "productId": "3",
-              "productName": "product3"
+      {
+        "httpRequest": {
+          "path": "/hello"
+        },
+        "httpResponse": {
+          "statusCode": 200,
+          "body": {
+            "json": {
+              "message": "Hello World"
             }
+          }
+        }
+      },
+      {
+        "httpRequest": {
+          "path": "/product/{cartId}",
+          "pathParameters": {
+            "cartId": [
+              "[A-Z0-9\\-]+"
             ]
+          }
+        },
+        "httpResponse": {
+          "statusCode": 200,
+          "body": {
+            "json": {
+              "productId": "1",
+              "productName": "product 1"
+            }
+          }
+        }
+      },
+      {
+        "httpRequest": {
+          "path": "/products"
+        },
+        "httpResponse": {
+          "statusCode": 200,
+          "body": {
+            "json": [
+              {
+                "productId": "1",
+                "productName": "product1"
+              },
+              {
+                "productId": "2",
+                "productName": "product2"
+              },
+              {
+                "productId": "3",
+                "productName": "product3"
+              }
+              ]
+          }
         }
       }
-    }
     ]
