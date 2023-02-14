@@ -2,7 +2,39 @@
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+
+...
+
+
+# HOW TO USE
+
+## Locally
+You can run your application in dev mode that enables live coding using:
+```shell script
+./mvnw compile quarkus:dev
+```
+
+```yaml Mockserver
+apiVersion: "rmarcello.mockserveroperator/v1"
+kind: Mockserver
+metadata:
+  name: mockserver-test
+spec:
+  replica: 1
+  image: mockserver/mockserver:latest
+  config: |
+    [...]
+```
+or 
+```
+kubectl apply -f .\k8s\mockserver-test.yaml
+```
+
+
+```
+kubectl port-forward svc/mockserver-test 8080:8080
+```
+from your browser: http://localhost:8080/mockserver/dashboard
 
 ## Running the application in dev mode
 

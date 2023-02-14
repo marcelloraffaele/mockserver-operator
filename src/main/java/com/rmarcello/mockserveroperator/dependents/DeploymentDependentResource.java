@@ -29,6 +29,10 @@ public class DeploymentDependentResource
     final var image = spec.getImage();
     final var replica = spec.getReplica();
     // final var config = spec.getConfig();
+    final var volumeName = name +"-vol";
+    final var initializerFileName = "initializerJson.json";
+    final var initializerFilePath = "/config/"+initializerFileName;
+    final var ENV_MOCKSERVER_INITIALIZATION_JSON_PATH = "MOCKSERVER_INITIALIZATION_JSON_PATH";
 
     var containerBuilder = new DeploymentBuilder()
         .withMetadata(createMetadata(smocker, labels))
@@ -39,14 +43,36 @@ public class DeploymentDependentResource
         .withNewMetadata().withLabels(labels).endMetadata()
         .withNewSpec()
         .addNewContainer()
-        .withName(name).withImage(image)
-        .addNewPort()
-        .withName("http-test").withProtocol("TCP").withContainerPort(8080)
-        .endPort()
-        .addNewPort()
-        .withName("http-management").withProtocol("TCP").withContainerPort(8081)
-        .endPort()
+          .withName(name).withImage(image)
+          .addNewPort()
+            .withName("http")
+            .withProtocol("TCP")
+            .withContainerPort(1080)
+          .endPort()
+
+          .addNewEnv()
+            .withName(ENV_MOCKSERVER_INITIALIZATION_JSON_PATH)
+            .withValue(initializerFilePath)
+          .endEnv()
+
+          .addNewVolumeMount()
+            .withName(volumeName)
+            .withMountPath(initializerFilePath)
+            .withSubPath(initializerFileName)
+            .withReadOnly(true)
+          .endVolumeMount()
+            
         .endContainer()
+          .addNewVolume()
+              .withName(volumeName)
+              .withNewConfigMap()
+                .withName(name)
+                .addNewItem()
+                  .withKey(initializerFileName)
+                  .withPath(initializerFileName)
+                .endItem()
+              .endConfigMap()
+          .endVolume()
         .endSpec()
         .endTemplate()
         .endSpec();

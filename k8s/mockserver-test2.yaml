@@ -1,0 +1,32 @@
+apiVersion: "rmarcello.mockserveroperator/v1"
+kind: Mockserver
+metadata:
+  name: mockserver-test
+spec:
+  replica: 1
+  image: mockserver/mockserver:latest
+  config: |
+    [
+    {
+      "httpRequest": {
+        "path": "/somePathOne"
+      },
+      "httpResponse": {
+        "statusCode": 200,
+        "body": {
+          "value": "one"
+        }
+      }
+    },
+    {
+      "httpRequest": {
+        "path": "/somePathTwo"
+      },
+      "httpResponse": {
+        "statusCode": 200,
+        "body": {
+          "value": "two"
+        }
+      }
+    }
+    ]
