@@ -15,6 +15,7 @@ import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.CRUDKubernetesDependentResource;
 
+@SuppressWarnings("unchecked")
 public class ConfigmapDependentResource extends CRUDKubernetesDependentResource<ConfigMap, Mockserver> {
 
   private static final Logger LOG = LoggerFactory.getLogger(ConfigmapDependentResource.class);

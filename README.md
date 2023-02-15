@@ -2,19 +2,36 @@
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
+The goal of this project is to demonstrate with a practical example how to implement a Kubernetes operator using [Quarkus](https://quarkus.io/) and the [Java Operator SDK](https://javaoperatorsdk.io/).
+This operator manages the creation/update of one or more mockserver instances preconfigured with the setup defined in the CRD.
+Although this example is very simple, it represents an excellent template of an operator as it allows you to manage the configuration and updating of many "secondary resources". Starting from this example it is possible to solve more complex cases.
 
 ...
 
 
 # HOW TO USE
 
-## Locally
-You can run your application in dev mode that enables live coding using:
+## Run locally from code
+First you neet to configure your `~/. kube/config` because, when run locally the framework will use your Kubernetes client configuration to establish a connection to the cluster.
+
+You can clone the git repository and run the application locally:
 ```shell script
 ./mvnw compile quarkus:dev
 ```
+this give you the opportunity to debug the code if you want.
 
-```yaml Mockserver
+## Install the operator
+TBD
+
+
+
+# Use it
+The operator create a new CRD named `Mockserver` that can be used to define our new Mockserver objects.
+
+We can create a simple new Mockserver as the following:
+
+```shell
+kubectl apply -f - <<EOF
 apiVersion: "rmarcello.mockserveroperator/v1"
 kind: Mockserver
 metadata:
@@ -38,12 +55,36 @@ spec:
       }
     }
     ]
+EOF
 ```
-or 
+
+we can see the following:
+
 ```
-kubectl apply -f k8s/mockserver-test.yaml
+$ kubectl get Mockserver
+NAME              AGE
+mockserver-test   26m
+
+$ kubectl get svc
+NAME              TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)    AGE
+mockserver-test   ClusterIP   10.106.5.11   <none>        8080/TCP   9m13s
+
+$ kubectl get deploy
+NAME              READY   UP-TO-DATE   AVAILABLE   AGE
+mockserver-test   1/1     1            1           9m43s
+
+$ kubectl get cm
+NAME               DATA   AGE
+mockserver-test    1      10m
 ```
-### Verify
+
+# Reconciliation
+After the creation or the update of the `Mockserver` the operator will work for us to change the kubernetes object status in order to reach the desired state.
+The first time the `Mockserver` is created, the object are created and the following time in case of update the operator will update these resources.
+When the object is deleted, the operator will clean all the owned resources.
+
+
+### Let's use the Mockserver
 ```
 kubectl port-forward svc/mockserver-test 8080:8080
 ```
@@ -56,12 +97,38 @@ we can see the initialization data.
 curl http://localhost:8080/hello
 ...
 ```
-## Update
+### Update the CRD
 
-When we change the CRD changing the configuration, for exaple addiing new API mocks:
+When we change the CRD changing the configuration:
+
+```shell
+kubectl apply -f - <<EOF
+apiVersion: "rmarcello.mockserveroperator/v1"
+kind: Mockserver
+metadata:
+  name: mockserver-test
+spec:
+  replica: 1
+  image: mockserver/mockserver:latest
+  config: |
+    [
+    {
+      "httpRequest": {
+        "path": "/hello"
+      },
+      "httpResponse": {
+        "statusCode": 200,
+        "body": {
+          "json": {
+            "message": "Updated message!!!"
+          }
+        }
+      }
+    }
+    ]
+EOF
 ```
-kubectl apply -f k8s/mockserver-test2.yaml
-```
+
 
 The operator will update the Mockserver and add the new API:
 
@@ -73,14 +140,14 @@ curl http://localhost:8080/products | jq
 ...
 ```
 
-## Running the application in dev mode
-
-You can run your application in dev mode that enables live coding using:
-```shell script
-./mvnw compile quarkus:dev
+### Delete the crd
+When we delete the CRD:
 ```
+$ kubectl delete Mockserver mockserver-test
+mockserver.rmarcello.mockserveroperator "mockserver-test" deleted
+```
+the operator will clean the environment deleteing all the resources owned by the CRD.
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
 
 ## Packaging and running the application
 
