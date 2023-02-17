@@ -39,6 +39,7 @@ metadata:
 spec:
   replica: 1
   image: mockserver/mockserver:latest
+  ingressHost: mockserver.local
   config: |
     [
     {
@@ -60,7 +61,7 @@ EOF
 
 we can see the following:
 
-```
+```shell
 $ kubectl get Mockserver
 NAME              AGE
 mockserver-test   26m
@@ -76,6 +77,41 @@ mockserver-test   1/1     1            1           9m43s
 $ kubectl get cm
 NAME               DATA   AGE
 mockserver-test    1      10m
+
+$ kubectl get mockserver mockserver-test -oyaml
+apiVersion: rmarcello.mockserveroperator/v1
+kind: Mockserver
+metadata:
+  finalizers:
+  - mockservers.rmarcello.mockserveroperator/finalizer
+  generation: 1
+  name: mockserver-test
+  namespace: default
+spec:
+  config: |
+    [
+    {
+      "httpRequest": {
+        "path": "/hello"
+      },
+      "httpResponse": {
+        "statusCode": 200,
+        "body": {
+          "json": {
+            "message": "Hello World"
+          }
+        }
+      }
+    }
+    ]
+  image: mockserver/mockserver:latest
+  ingressHost: mockserver.local
+  replica: 1
+status:
+  areWeGood: true
+  externalUrl: http://mockserver.local
+  internalUrl: http://mockserver-test.default.svc.cluster.local:8080
+  observedGeneration: 1
 ```
 
 # Reconciliation
@@ -84,7 +120,8 @@ The first time the `Mockserver` is created, the object are created and the follo
 When the object is deleted, the operator will clean all the owned resources.
 
 
-### Let's use the Mockserver
+## Test Mockserver
+### Via direct port forward
 ```
 kubectl port-forward svc/mockserver-test 8080:8080
 ```
@@ -95,8 +132,20 @@ from your browser: http://localhost:8080/mockserver/dashboard:
 we can see the initialization data.
 ```
 curl http://localhost:8080/hello
-...
 ```
+### Via ingress
+
+from your browser: `http://mockserver.local/mockserver/dashboard`
+
+or via API:
+```
+$ curl http://mockserver.local/hello
+{
+  "message" : "Hello World"
+}
+```
+
+
 ### Update the CRD
 
 When we change the CRD changing the configuration:
@@ -110,6 +159,7 @@ metadata:
 spec:
   replica: 1
   image: mockserver/mockserver:latest
+  ingressHost: mockserver.local
   config: |
     [
     {
@@ -134,10 +184,11 @@ The operator will update the Mockserver and add the new API:
 
 
 ```
+$ curl http://localhost:8080/hello
+{
+  "message" : "Updated message!!!"
+}
 
-
-curl http://localhost:8080/products | jq
-...
 ```
 
 ### Delete the crd
