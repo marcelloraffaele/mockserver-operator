@@ -4,8 +4,8 @@ import io.javaoperatorsdk.operator.api.ObservedGenerationAwareStatus;
 
 public class MockserverStatus extends ObservedGenerationAwareStatus {
     private Boolean areWeGood;
-    private String testUrl;
-    private String managementUrl;
+    private String internalUrl;
+    private String externalUrl;
     private String errorMessage;
 
     public Boolean getAreWeGood() {
@@ -30,32 +30,26 @@ public class MockserverStatus extends ObservedGenerationAwareStatus {
         return this.areWeGood;
     }
 
-    public String getTestUrl() {
-        return this.testUrl;
+    public String getInternalUrl() {
+        return internalUrl;
     }
 
-    public MockserverStatus setTestUrl(String testUrl) {
-        this.testUrl = testUrl;
-        return this;
+    public void setInternalUrl(String internalUrl) {
+        this.internalUrl = internalUrl;
     }
 
-    public String getManagementUrl() {
-        return this.managementUrl;
+    public String getExternalUrl() {
+        return externalUrl;
     }
 
-    public MockserverStatus setManagementUrl(String managementUrl) {
-        this.managementUrl = managementUrl;
-        return this;
+    public void setExternalUrl(String externalUrl) {
+        this.externalUrl = externalUrl;
     }
 
     @Override
     public String toString() {
-        return "{" +
-                " areWeGood='" + isAreWeGood() + "'" +
-                ", testUrl='" + getTestUrl() + "'" +
-                ", managementUrl='" + getManagementUrl() + "'" +
-                ", errorMessage='" + getErrorMessage() + "'" +
-                "}";
+        return "MockserverStatus [areWeGood=" + areWeGood + ", internalUrl=" + internalUrl + ", externalUrl="
+                + externalUrl + ", errorMessage=" + errorMessage + "]";
     }
 
 }
