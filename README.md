@@ -6,9 +6,6 @@ The goal of this project is to demonstrate with a practical example how to imple
 This operator manages the creation/update of one or more mockserver instances preconfigured with the setup defined in the CRD.
 Although this example is very simple, it represents an excellent template of an operator as it allows you to manage the configuration and updating of many "secondary resources". Starting from this example it is possible to solve more complex cases.
 
-...
-
-
 # HOW TO USE
 
 ## Run locally from code
@@ -75,6 +72,10 @@ NAME              READY   UP-TO-DATE   AVAILABLE   AGE
 mockserver-test   1/1     1            1           9m43s
 
 $ kubectl get cm
+NAME               DATA   AGE
+mockserver-test    1      10m
+
+$ kubectl get ing
 NAME               DATA   AGE
 mockserver-test    1      10m
 
